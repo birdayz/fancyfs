@@ -17,6 +17,7 @@ type inmemoryBlobstore struct {
 	blobs map[string]*Blob
 }
 
+// nolint: deadcode
 func newInmemoryBlobstore() *inmemoryBlobstore {
 	return &inmemoryBlobstore{
 		blobs: make(map[string]*Blob),
