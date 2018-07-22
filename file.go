@@ -1,6 +1,7 @@
 package fancyfs
 
 import (
+	"errors"
 	"io"
 )
 
@@ -24,13 +25,18 @@ func NewFile(blobProvider Blobstore, blobSize int64) *File {
 func (f *File) ReadAt(b []byte, off int64) (n int, err error) {
 	blobNo := blobNoForOffset(off, f.blobSize)
 
-	blobID := f.blobs[blobNo]
+	blobID, ok := f.blobs[blobNo]
+	if !ok {
+		return n, errors.New("Could not find blob for offset")
+	}
 
 	// get blob
 	blob, err := f.blobProvider.Get(blobID)
 	if err != nil {
 		return 0, err
 	}
+	// TODO this does not work currently if the offset is not at file start :)
+	// TODO this should use multiple blobs if required to fill b
 	return copy(b, blob.Data), nil
 }
 
