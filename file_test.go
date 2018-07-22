@@ -7,7 +7,7 @@ import (
 )
 
 func TestWriteReadAllBytes(t *testing.T) {
-	blobstore := NewInmemBlob()
+	blobstore := newInmemoryBlobstore()
 	f := NewFile(blobstore, 1024)
 
 	in := []byte("test")
@@ -27,7 +27,7 @@ func TestWriteMultiBlob(t *testing.T) {
 }
 
 func TestWriteReadInMiddleOfBlob(t *testing.T) {
-	blobstore := NewInmemBlob()
+	blobstore := newInmemoryBlobstore()
 	f := NewFile(blobstore, 1024)
 
 	in := []byte("test")
