@@ -24,7 +24,6 @@ func TestWriteReadAllBytes(t *testing.T) {
 }
 
 func TestWriteMultiBlob(t *testing.T) {
-	// TODO
 }
 
 func TestWriteReadInMiddleOfBlob(t *testing.T) {
