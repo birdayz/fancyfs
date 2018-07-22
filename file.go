@@ -1,13 +1,8 @@
 package fancyfs
 
-import (
-	"fmt"
-)
-
 // File represents the current composition of blobs for a file.
 type File struct {
 	blobProvider Blobstore
-	// metadataProvider MetadataProvider
 
 	blobs map[int64]string
 
@@ -36,9 +31,6 @@ func (f *File) ReadAt(b []byte, off int64) (n int, err error) {
 	if err != nil {
 		return 0, err
 	}
-
-	fmt.Println(blob.Data)
-
 	return copy(b, blob.Data), nil
 }
 
@@ -109,11 +101,8 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 		// first save the blob, then update metadata. It's ok if an
 		// unreferenced blob exists, but it's very bad if a metadata
 		// entry without the corresponding blob exists
-
-		fmt.Println("written", copied)
-		fmt.Println(blob)
+		// TODO persistent/remote metadata mgmt not implemented yet
 	}
-	fmt.Println("copied total", n)
 	return
 }
 

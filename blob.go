@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"io"
 )
 
@@ -35,7 +34,6 @@ func NewInmemBlob() *InmemBlobProvider {
 }
 
 func (i *InmemBlobProvider) Create(b []byte) (id string, err error) {
-	fmt.Println("Create")
 	x := sha256.New()
 	_, err = io.Copy(x, bytes.NewReader(b))
 	if err != nil {
@@ -43,8 +41,6 @@ func (i *InmemBlobProvider) Create(b []byte) (id string, err error) {
 	}
 	idBytes := x.Sum(nil)
 	id = hex.EncodeToString(idBytes)
-
-	fmt.Println(b)
 
 	// Copy from the buffer and store it separately for now
 	c := make([]byte, len(b))
