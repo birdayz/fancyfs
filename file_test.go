@@ -38,8 +38,8 @@ func TestWriteReadInMiddleOfBlob(t *testing.T) {
 
 	expected := append([]byte{0}, []byte("test")...)
 
-	result := make([]byte, len(in))
+	result := make([]byte, 1024)
 	n, err = f.ReadAt(result, 0)
 	assert.NoError(t, err)
-	assert.Equal(t, expected, result)
+	assert.Equal(t, expected, result[:n])
 }

@@ -81,10 +81,8 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 			maxPossibleNeededLen = int64(cap(b))
 		}
 
-		// point to offset in blob where we want to write
-		// FIXME this will not save the complete blob but only the written part - bug!
-		blob = blob[blobOff:maxPossibleNeededLen]
-		copied := copy(blob, b)
+		blob = blob[:maxPossibleNeededLen]
+		copied := copy(blob[blobOff:blobOff+maxPossibleNeededLen], b)
 
 		if copied == 0 {
 			return n, io.ErrShortWrite
