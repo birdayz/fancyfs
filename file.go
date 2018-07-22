@@ -1,5 +1,9 @@
 package fancyfs
 
+import (
+	"io"
+)
+
 // File represents the current composition of blobs for a file.
 type File struct {
 	blobProvider Blobstore
@@ -81,6 +85,10 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 		// FIXME this will not save the complete blob but only the written part - bug!
 		blob = blob[blobOff:maxPossibleNeededLen]
 		copied := copy(blob, b)
+
+		if copied == 0 {
+			return n, io.ErrShortWrite
+		}
 
 		// We altered the blob, so we have to save it again at the blob
 		// store. Do this before adjusting n.
