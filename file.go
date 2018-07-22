@@ -11,9 +11,6 @@ type File struct {
 	blobs map[int64]string
 
 	blobSize int64
-
-	size int64
-	// save snapshot
 }
 
 func NewFile(blobProvider Blobstore, blobSize int64) *File {
@@ -27,10 +24,10 @@ func NewFile(blobProvider Blobstore, blobSize int64) *File {
 func (f *File) ReadAt(b []byte, off int64) (n int, err error) {
 	blobNo := blobNoForOffset(off, f.blobSize)
 
-	blobId := f.blobs[blobNo]
+	blobID := f.blobs[blobNo]
 
 	// get blob
-	blob, err := f.blobProvider.Get(blobId)
+	blob, err := f.blobProvider.Get(blobID)
 	if err != nil {
 		return 0, err
 	}
@@ -51,19 +48,18 @@ func (f *File) blobForOffset(fileOff int64) (blob []byte, err error) {
 			return nil, err
 		}
 		return bl.Data, err
-	} else {
-		blobData := make([]byte, 0, f.blobSize) // TODO move this somewhere else where we can control this separately
-		blob = blobData
-		return
 	}
+	blobData := make([]byte, 0, f.blobSize) // TODO move this somewhere else where we can control this separately
+	blob = blobData
+	return
 }
 
 func (f *File) offsetInBlob(fileOff int64) int64 {
 	return fileOff % f.blobSize
 }
 
-// TODO improve support for sparse files
 func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
+	// TODO improve support for sparse files
 	for len(b) > 0 {
 		blob, err := f.blobForOffset(off)
 		if err != nil {
@@ -114,12 +110,4 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 
 func blobNoForOffset(off int64, blobSize int64) int64 {
 	return off / blobSize
-}
-
-func offsetInBlob(off int64, blobSize int64) int64 {
-	return off % blobSize
-}
-
-func (f *File) numBlobs() int64 {
-	return f.size / f.blobSize
 }
