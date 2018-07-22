@@ -12,12 +12,11 @@ type File struct {
 	// save snapshot
 }
 
-func NewFile(blobProvider Blobstore) *File {
+func NewFile(blobProvider Blobstore, blobSize int64) *File {
 	return &File{
 		blobProvider: blobProvider,
-		// metadataProvider: metadataProvider,
-		blobSize: 2 * 1024 * 1024,
-		blobs:    make(map[int64]string),
+		blobSize:     blobSize,
+		blobs:        make(map[int64]string),
 	}
 }
 
