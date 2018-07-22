@@ -5,8 +5,7 @@ import "github.com/stretchr/testify/assert"
 
 func TestWriteAllBytes(t *testing.T) {
 	bp := NewInmemBlob()
-	m := NewInmemMetadata()
-	f := NewFile(bp, m)
+	f := NewFile(bp)
 
 	in := []byte("test")
 	n, err := f.WriteAt(in, 0)

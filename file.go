@@ -17,7 +17,7 @@ type File struct {
 	// save snapshot
 }
 
-func NewFile(blobProvider Blobstore, metadataProvider MetadataProvider) *File {
+func NewFile(blobProvider Blobstore) *File {
 	return &File{
 		blobProvider: blobProvider,
 		// metadataProvider: metadataProvider,
