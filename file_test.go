@@ -1,11 +1,14 @@
 package fancyfs
 
-import "testing"
-import "github.com/stretchr/testify/assert"
+import (
+	"testing"
 
-func TestWriteAllBytes(t *testing.T) {
-	bp := NewInmemBlob()
-	f := NewFile(bp)
+	"github.com/stretchr/testify/assert"
+)
+
+func TestWriteReadAllBytes(t *testing.T) {
+	blobstore := NewInmemBlob()
+	f := NewFile(blobstore, 1024)
 
 	in := []byte("test")
 	n, err := f.WriteAt(in, 0)
@@ -16,5 +19,27 @@ func TestWriteAllBytes(t *testing.T) {
 	n, err = f.ReadAt(result, 0)
 	assert.NoError(t, err)
 	assert.Equal(t, len(in), n)
+	assert.Equal(t, in, result)
 
+}
+
+func TestWriteMultiBlob(t *testing.T) {
+	// TODO
+}
+
+func TestWriteReadInMiddleOfBlob(t *testing.T) {
+	blobstore := NewInmemBlob()
+	f := NewFile(blobstore, 1024)
+
+	in := []byte("test")
+	n, err := f.WriteAt(in, 1)
+	assert.NoError(t, err)
+	assert.Equal(t, len(in), n)
+
+	expected := append([]byte{0}, []byte("test")...)
+
+	result := make([]byte, len(in))
+	n, err = f.ReadAt(result, 0)
+	assert.NoError(t, err)
+	assert.Equal(t, expected, result)
 }
