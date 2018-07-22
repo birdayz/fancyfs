@@ -35,9 +35,8 @@ func (f *File) ReadAt(b []byte, off int64) (n int, err error) {
 	if err != nil {
 		return 0, err
 	}
-	// TODO this does not work currently if the offset is not at file start :)
 	// TODO this should use multiple blobs if required to fill b
-	return copy(b, blob.Data), nil
+	return copy(b, blob.Data[f.offsetInBlob(off):]), nil
 }
 
 // Only retrieve / create blob for offset in file transparently. adjusting blob
