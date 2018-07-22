@@ -9,7 +9,7 @@ type File struct {
 	blobProvider Blobstore
 	// metadataProvider MetadataProvider
 
-	blobs []string
+	blobs map[int64]string
 
 	blobSize int64
 
@@ -22,7 +22,7 @@ func NewFile(blobProvider Blobstore) *File {
 		blobProvider: blobProvider,
 		// metadataProvider: metadataProvider,
 		blobSize: 2 * 1024 * 1024,
-		blobs:    make([]string, 100),
+		blobs:    make(map[int64]string),
 	}
 }
 
@@ -49,35 +49,17 @@ func (f *File) ReadAt(b []byte, off int64) (n int, err error) {
 func (f *File) blobForOffset(fileOff int64) (blob []byte, err error) {
 	blobNo := blobNoForOffset(fileOff, f.blobSize)
 
-	// check if we 'know' this blob / offset already
-
-	if blobNo < int64(len(f.blobs)) {
-		// get blob
-		blobID := f.blobs[blobNo]
-		if blobID != "" {
-			bl, err := f.blobProvider.Get(blobID)
-			if err != nil {
-				return nil, err
-			}
-			return bl.Data, err
-		} else {
-			blobData := make([]byte, 0, f.blobSize) // TODO move this somewhere else where we can control this separately
-			blob = blobData
-			return
+	blobID := f.blobs[blobNo]
+	if blobID != "" {
+		bl, err := f.blobProvider.Get(blobID)
+		if err != nil {
+			return nil, err
 		}
-		// blob = f.blobProvider.
+		return bl.Data, err
 	} else {
-		panic("this should not happen atm")
-		// TODO impl this
-
-		// need to create a new blobId entry
-		// fmt.Println("old size", len(f.blobs))
-		// TODO algorithm how to increase size of array, by how much?
-		// We assume that it's large enough from the beginning
-
-		// f.blobs = append(f.blobs, make([]byte, len(f.blobs)))
-		// fmt.Println()
-		// increase size of map
+		blobData := make([]byte, 0, f.blobSize) // TODO move this somewhere else where we can control this separately
+		blob = blobData
+		return
 	}
 }
 
