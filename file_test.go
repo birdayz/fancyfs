@@ -26,7 +26,7 @@ func TestWriteReadAllBytes(t *testing.T) {
 func TestWriteMultiBlob(t *testing.T) {
 }
 
-func TestWriteReadInMiddleOfBlob(t *testing.T) {
+func TestWriteToMiddleOfBlob(t *testing.T) {
 	blobstore := newInmemoryBlobstore()
 	f := NewFile(blobstore, 1024)
 
