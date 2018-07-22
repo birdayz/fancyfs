@@ -26,7 +26,7 @@ func TestWriteReadAllBytes(t *testing.T) {
 func TestWriteMultiBlob(t *testing.T) {
 }
 
-func TestWriteToMiddleOfBlob(t *testing.T) {
+func TestWriteWithLeadingEmptySpace(t *testing.T) {
 	blobstore := newInmemoryBlobstore()
 	f := NewFile(blobstore, 1024)
 
@@ -41,4 +41,19 @@ func TestWriteToMiddleOfBlob(t *testing.T) {
 	n, err = f.ReadAt(result, 0)
 	assert.NoError(t, err)
 	assert.Equal(t, expected, result[:n])
+}
+
+func TestWriteReadInMiddleOfBlob(t *testing.T) {
+	blobstore := newInmemoryBlobstore()
+	f := NewFile(blobstore, 1024)
+
+	in := []byte("test")
+	n, err := f.WriteAt(in, 1)
+	assert.NoError(t, err)
+	assert.Equal(t, len(in), n)
+
+	result := make([]byte, 1024)
+	n, err = f.ReadAt(result, 1)
+	assert.NoError(t, err)
+	assert.Equal(t, in, result[:n])
 }
