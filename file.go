@@ -67,7 +67,7 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 		}
 		blobOff := f.offsetInBlob(off)
 
-		// Try to grow as much as needed until cap is reached
+		// Try to grow blob slice as much as needed until cap is reached
 		var maxPossibleNeededLen int64
 		if blobOff+int64(len(b)) < int64(cap(blob)) {
 			// Grow to blobOff + len(b)
@@ -78,6 +78,7 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 		}
 
 		// point to offset in blob where we want to write
+		// FIXME this will not save the complete blob but only the written part - bug!
 		blob = blob[blobOff:maxPossibleNeededLen]
 		copied := copy(blob, b)
 
