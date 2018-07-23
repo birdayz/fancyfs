@@ -12,6 +12,8 @@ type File struct {
 	blobs map[int64]string
 
 	blobSize int64
+
+	size int64
 }
 
 func NewFile(blobProvider Blobstore, blobSize int64) *File {
@@ -100,6 +102,9 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 
 		n += copied
 
+		if off+int64(n) > f.size {
+			f.size = off + int64(n)
+		}
 		// Advance input pointers/offsets accordingly for next loop iteration
 		b = b[copied:]
 		off += int64(copied)
