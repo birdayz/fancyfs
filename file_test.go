@@ -64,4 +64,16 @@ func TestWriteReadLargerThanBlobSize(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-// Testcase to read last byte
+func TestReadLastByte(t *testing.T) {
+	blobstore := newInmemoryBlobstore()
+	f := NewFile(blobstore, 100)
+
+	n, err := f.WriteAt([]byte("test"), 0)
+	assert.NoError(t, err)
+
+	result := make([]byte, 1024)
+	n, err = f.ReadAt(result, 3)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, n)
+	assert.Equal(t, []byte("t"), result[:n])
+}
