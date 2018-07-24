@@ -37,7 +37,6 @@ func (f *File) ReadAt(b []byte, off int64) (n int, err error) {
 			return 0, err
 		}
 
-		// TODO this should use multiple blobs if required to fill b
 		bytesRead := copy(b, blob.Data[f.offsetInBlob(off):])
 		off += int64(bytesRead)
 

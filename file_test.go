@@ -15,9 +15,6 @@ func TestWriteReadAllBytes(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, len(in), n)
 
-	// FIXME disabled for the moment, ReadAt can't deal with the latest
-	// refactoring in this case
-
 	result := make([]byte, len(in))
 	n, err = f.ReadAt(result, 0)
 	assert.NoError(t, err)
