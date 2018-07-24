@@ -102,10 +102,15 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 
 		// We altered the blob, so we have to save it at the blob
 		// store. Do this before adjusting n.
-		id, err := f.blobstore.Create(blob)
+		id, created, err := f.blobstore.Put(blob)
 		if err != nil {
 			return n, err
 		}
+
+		if !created {
+			println("Blob already exists")
+		}
+
 		blobNo := blobNoForOffset(off, f.blobSize)
 		f.blobs[blobNo] = id
 

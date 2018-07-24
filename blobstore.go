@@ -8,9 +8,16 @@ import (
 	"io"
 )
 
+// Blobstore stores arbitrary blobs. Implementations SHOULD base the ID on the
+// content, so blobs with the same content can be deduplicated.
 type Blobstore interface {
+	// Get returns the blob with the given id.
 	Get(id string) (*Blob, error)
-	Create([]byte) (id string, err error)
+
+	// Put stores the blob. returns created = true if a blob has been
+	// written. If the blob with the same id already exists, created=false
+	// is returned.
+	Put([]byte) (id string, created bool, err error)
 }
 
 type inmemoryBlobstore struct {
@@ -24,14 +31,18 @@ func newInmemoryBlobstore() *inmemoryBlobstore {
 	}
 }
 
-func (i *inmemoryBlobstore) Create(b []byte) (id string, err error) {
+func (i *inmemoryBlobstore) Put(b []byte) (id string, created bool, err error) {
 	x := sha256.New()
 	_, err = io.Copy(x, bytes.NewReader(b))
 	if err != nil {
-		return "", err
+		return
 	}
 	idBytes := x.Sum(nil)
 	id = hex.EncodeToString(idBytes)
+
+	if _, ok := i.blobs[id]; ok {
+		return
+	}
 
 	// Copy from the buffer and store it separately for now
 	c := make([]byte, len(b))
@@ -39,6 +50,7 @@ func (i *inmemoryBlobstore) Create(b []byte) (id string, err error) {
 	i.blobs[id] = &Blob{
 		Data: c,
 	}
+	created = true
 
 	return
 }
