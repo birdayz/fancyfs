@@ -91,20 +91,19 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 		copied := copy(blob[blobOff:], b)
 
 		// Detect if we increased the size of the blob
-		if blobOff+int64(n) > blobSize {
-			// yes we did
+		if blobOff+int64(copied) > blobSize {
 			blobSize = blobOff + int64(copied)
 		}
 
 		// Reduce blob as much as possible because we *HAVE* to omit
-		// zeroes at the end - those are no real content.
+		// unwritten zeroes at the end - those are no real content.
 		blob = blob[:blobSize]
 
 		if copied == 0 {
 			return n, io.ErrShortWrite
 		}
 
-		// We altered the blob, so we have to save it again at the blob
+		// We altered the blob, so we have to save it at the blob
 		// store. Do this before adjusting n.
 		id, err := f.blobProvider.Create(blob)
 		if err != nil {
