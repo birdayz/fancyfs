@@ -1,7 +1,6 @@
 package fancyfs
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -19,12 +18,11 @@ func TestWriteReadAllBytes(t *testing.T) {
 	// FIXME disabled for the moment, ReadAt can't deal with the latest
 	// refactoring in this case
 
-	// result := make([]byte, len(in))
-	// n, err = f.ReadAt(result, 0)
-	// assert.NoError(t, err)
-	// assert.Equal(t, len(in), n)
-	// assert.Equal(t, in, result)
-
+	result := make([]byte, len(in))
+	n, err = f.ReadAt(result, 0)
+	assert.NoError(t, err)
+	assert.Equal(t, len(in), n)
+	assert.Equal(t, in, result)
 }
 
 func TestWriteMultiBlob(t *testing.T) {
@@ -43,7 +41,6 @@ func TestWriteWithLeadingEmptySpace(t *testing.T) {
 
 	result := make([]byte, 1024)
 	n, err = f.ReadAt(result, 0)
-	println(n)
 	assert.NoError(t, err)
 	assert.Equal(t, expected, result[:n])
 }
@@ -71,7 +68,6 @@ func TestWriteReadLargerThanBlobSize(t *testing.T) {
 	_, err := f.WriteAt(in, 0)
 
 	assert.NoError(t, err)
-	fmt.Println(err)
 }
 
 // Testcase to read last byte
