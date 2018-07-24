@@ -72,7 +72,6 @@ func (f *File) offsetInBlob(fileOff int64) int64 {
 }
 
 func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
-	// TODO improve support for sparse files
 	for len(b) > 0 {
 		blob, err := f.blobForOffset(off)
 		if err != nil {

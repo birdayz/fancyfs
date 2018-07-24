@@ -25,9 +25,6 @@ func TestWriteReadAllBytes(t *testing.T) {
 	assert.Equal(t, in, result)
 }
 
-func TestWriteMultiBlob(t *testing.T) {
-}
-
 func TestWriteWithLeadingEmptySpace(t *testing.T) {
 	blobstore := newInmemoryBlobstore()
 	f := NewFile(blobstore, 1024)
