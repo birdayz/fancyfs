@@ -2,6 +2,7 @@ package fancyfs
 
 import (
 	"errors"
+	"fmt"
 	"io"
 )
 
@@ -108,7 +109,7 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 		}
 
 		if !created {
-			println("Blob already exists")
+			fmt.Printf("Blob with id %v exists already\n", id)
 		}
 
 		blobNo := blobNoForOffset(off, f.blobSize)
