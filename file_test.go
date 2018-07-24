@@ -68,8 +68,11 @@ func TestReadLastByte(t *testing.T) {
 	blobstore := newInmemoryBlobstore()
 	f := NewFile(blobstore, 100)
 
-	n, err := f.WriteAt([]byte("test"), 0)
+	in := []byte("test")
+
+	n, err := f.WriteAt(in, 0)
 	assert.NoError(t, err)
+	assert.Equal(t, len(in), n)
 
 	result := make([]byte, 1024)
 	n, err = f.ReadAt(result, 3)
