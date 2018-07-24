@@ -91,7 +91,7 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 		copied := copy(blob[blobOff:], b)
 
 		// Detect if we increased the size of the blob
-		if blobOff+int64(n) > int64(blobSize) {
+		if blobOff+int64(n) > blobSize {
 			// yes we did
 			blobSize = blobOff + int64(copied)
 		}
