@@ -38,6 +38,9 @@ func (f *File) ReadAt(b []byte, off int64) (n int, err error) {
 		}
 
 		bytesRead := copy(b, blob.Data[f.offsetInBlob(off):])
+		if bytesRead == 0 {
+			return io.ErrNoProgress
+		}
 		off += int64(bytesRead)
 
 		n += bytesRead
