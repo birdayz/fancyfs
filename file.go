@@ -7,20 +7,17 @@ import (
 
 // File represents the current composition of blobs for a file.
 type File struct {
-	blobProvider Blobstore
-
-	blobs map[int64]string
-
-	blobSize int64
-
-	size int64
+	blobstore Blobstore
+	blobs     map[int64]string
+	blobSize  int64
+	size      int64
 }
 
 func NewFile(blobProvider Blobstore, blobSize int64) *File {
 	return &File{
-		blobProvider: blobProvider,
-		blobSize:     blobSize,
-		blobs:        make(map[int64]string),
+		blobstore: blobProvider,
+		blobSize:  blobSize,
+		blobs:     make(map[int64]string),
 	}
 }
 
@@ -32,7 +29,7 @@ func (f *File) ReadAt(b []byte, off int64) (n int, err error) {
 			return n, errors.New("Could not find blob for offset")
 		}
 		// get blob
-		blob, err := f.blobProvider.Get(blobID)
+		blob, err := f.blobstore.Get(blobID)
 		if err != nil {
 			return 0, err
 		}
@@ -44,7 +41,6 @@ func (f *File) ReadAt(b []byte, off int64) (n int, err error) {
 		off += int64(bytesRead)
 
 		n += bytesRead
-
 	}
 	return
 }
@@ -58,7 +54,7 @@ func (f *File) blobForOffset(fileOff int64) (blob []byte, err error) {
 
 	blobID := f.blobs[blobNo]
 	if blobID != "" {
-		bl, err := f.blobProvider.Get(blobID)
+		bl, err := f.blobstore.Get(blobID)
 		if err != nil {
 			return nil, err
 		}
@@ -106,7 +102,7 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 
 		// We altered the blob, so we have to save it at the blob
 		// store. Do this before adjusting n.
-		id, err := f.blobProvider.Create(blob)
+		id, err := f.blobstore.Create(blob)
 		if err != nil {
 			return n, err
 		}
