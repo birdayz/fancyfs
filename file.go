@@ -25,20 +25,26 @@ func NewFile(blobProvider Blobstore, blobSize int64) *File {
 }
 
 func (f *File) ReadAt(b []byte, off int64) (n int, err error) {
-	blobNo := blobNoForOffset(off, f.blobSize)
+	for n < len(b) && off < f.size {
+		blobNo := blobNoForOffset(off, f.blobSize)
+		blobID, ok := f.blobs[blobNo]
+		if !ok {
+			return n, errors.New("Could not find blob for offset")
+		}
+		// get blob
+		blob, err := f.blobProvider.Get(blobID)
+		if err != nil {
+			return 0, err
+		}
 
-	blobID, ok := f.blobs[blobNo]
-	if !ok {
-		return n, errors.New("Could not find blob for offset")
-	}
+		// TODO this should use multiple blobs if required to fill b
+		bytesRead := copy(b, blob.Data[f.offsetInBlob(off):])
+		off += int64(bytesRead)
 
-	// get blob
-	blob, err := f.blobProvider.Get(blobID)
-	if err != nil {
-		return 0, err
+		n += bytesRead
+
 	}
-	// TODO this should use multiple blobs if required to fill b
-	return copy(b, blob.Data[f.offsetInBlob(off):]), nil
+	return
 }
 
 // Only retrieve / create blob for offset in file transparently. adjusting blob
@@ -72,20 +78,27 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 		if err != nil {
 			return n, err
 		}
+
+		blobSize := int64(len(blob))
 		blobOff := f.offsetInBlob(off)
 
-		// Try to grow blob slice as much as needed until cap is reached
-		var maxPossibleNeededLen int64
-		if blobOff+int64(len(b)) < int64(cap(blob)) {
-			// Grow to blobOff + len(b)
-			// blob = blob[blobOff : blobOff+int64(len(b))]
-			maxPossibleNeededLen = blobOff + int64(len(b))
-		} else {
-			maxPossibleNeededLen = int64(cap(b))
+		// grow blob to its maximum if we can't write within its current bounds
+		if blobOff+int64(len(b)) > int64(len(blob)) {
+			// grow blob as much as possible
+			blob = blob[:cap(blob)]
 		}
 
-		blob = blob[:maxPossibleNeededLen]
-		copied := copy(blob[blobOff:blobOff+maxPossibleNeededLen], b)
+		copied := copy(blob[blobOff:], b)
+
+		// Detect if we increased the size of the blob
+		if blobOff+int64(n) > int64(blobSize) {
+			// yes we did
+			blobSize = blobOff + int64(copied)
+		}
+
+		// Reduce blob as much as possible because we *HAVE* to omit
+		// zeroes at the end - those are no real content.
+		blob = blob[:blobSize]
 
 		if copied == 0 {
 			return n, io.ErrShortWrite
@@ -105,6 +118,7 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 		if off+int64(n) > f.size {
 			f.size = off + int64(n)
 		}
+
 		// Advance input pointers/offsets accordingly for next loop iteration
 		b = b[copied:]
 		off += int64(copied)
