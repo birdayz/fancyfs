@@ -119,8 +119,6 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 
 		if off+int64(copied) > f.size {
 			f.size = off + int64(copied)
-
-			fmt.Println("set size to ", f.size)
 		}
 
 		// Advance input pointers/offsets accordingly for next loop iteration
