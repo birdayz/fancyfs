@@ -21,7 +21,10 @@ func main() {
 
 	folder := "/tmp/mnt26"
 
-	_ = os.Mkdir(folder, 0777)
+	err := os.Mkdir(folder, 0750)
+	if err != nil {
+		panic(err)
+	}
 	server, _, err := nodefs.MountRoot(folder, root, nodefs.NewOptions())
 	if err != nil {
 		panic(err)

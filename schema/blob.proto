@@ -15,7 +15,7 @@ message Signature {
 
 message PermanodeMeta {
   string rnd = 1; // rnd stuff to make this blob's id unique
-  string create_timestamp = 2;
+  int64 create_timestamp = 2;
 }
 
 message FileNode {

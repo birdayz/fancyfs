@@ -7,20 +7,23 @@ import (
 
 	"io/ioutil"
 
-	"github.com/birdayz/fancyfs"
+	"github.com/birdayz/fancyfs/blobstore"
+	"github.com/birdayz/fancyfs/cas"
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestStuff(t *testing.T) {
 	blobSize := int64(1)
-	f, err := os.OpenFile("/tmp/lol.txt", 0, 0)
-	defer f.Close()
+	f, err := os.OpenFile("blob_test.go", 0, 0)
+	defer func() {
+		_ = f.Close()
+	}()
 	assert.NoError(t, err)
 
-	i := fancyfs.NewInmemoryBlobstore()
+	i := blobstore.NewInmemoryBlobstore()
 
-	fancyFile := fancyfs.NewFile(i, blobSize)
+	fancyFile := cas.NewFile(i, blobSize)
 
 	n, err := io.Copy(fancyFile, f)
 	assert.NoError(t, err)
@@ -44,10 +47,9 @@ func TestStuff(t *testing.T) {
 	err = ioutil.WriteFile("/tmp/schemablob", serialized, 0777)
 	assert.NoError(t, err)
 
-	fileNew := fancyfs.NewFileFromSchemaBlob(i, blobSize, schemaBlob.BlobRefs, schemaBlob.Size)
+	fileNew := cas.NewFileFromSchemaBlob(i, blobSize, schemaBlob.BlobRefs, schemaBlob.Size)
 
-	buf := make([]byte, 100)
-	n2, err := fileNew.ReadAt(buf, int64(0))
+	buf, err := ioutil.ReadAll(fileNew)
 	assert.NoError(t, err)
-	assert.Equal(t, stat.Size(), int64(n2))
+	assert.EqualValues(t, stat.Size(), len(buf))
 }

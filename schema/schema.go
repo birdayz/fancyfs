@@ -3,18 +3,17 @@ package schema
 import "github.com/birdayz/fancyfs"
 import "github.com/golang/protobuf/proto"
 
-type SchemaStorage struct {
-	blobstore fancyfs.Blobstore
+type Storage struct {
+	Blobstore fancyfs.Blobstore
 }
 
-// TODO different methods for permanode or patch node?
-func (s *SchemaStorage) Put(schemaBlob *FileNode) (id string, created bool, err error) {
+func (s *Storage) Put(schemaBlob *FileNode) (id string, created bool, err error) {
 	blob, err := proto.Marshal(schemaBlob)
 	if err != nil {
 		return "", false, err
 	}
 
-	id, created, err = s.blobstore.Put(blob)
+	id, created, err = s.Blobstore.Put(blob)
 	if err != nil {
 		return "", created, err
 	}
@@ -25,8 +24,8 @@ func (s *SchemaStorage) Put(schemaBlob *FileNode) (id string, created bool, err 
 
 }
 
-func (s *SchemaStorage) Get(id string) (*FileNode, error) {
-	blob, err := s.blobstore.Get(id)
+func (s *Storage) Get(id string) (*FileNode, error) {
+	blob, err := s.Blobstore.Get(id)
 	if err != nil {
 		return nil, err
 	}

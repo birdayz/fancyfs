@@ -27,6 +27,6 @@ jobs:
       - run: gometalinter --install
       - run: dep ensure
       - run: dep status
-      - run: go build -v ./...
-      - run: gometalinter --vendor --exclude="\bexported \w+ (\S*['.]*)([a-zA-Z'.*]*) should have comment or be unexported\b" -j 8 ./...
-      - run: go test -cover -v ./...
+      - run: make build
+      - run: make lint
+      - run: make test
