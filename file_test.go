@@ -81,7 +81,7 @@ func TestReadLastByte(t *testing.T) {
 	assert.Equal(t, []byte("t"), result[:n])
 }
 func TestSizeAfterWrite(t *testing.T) {
-	blobstore := NewInmemoryBlobstore()
+	blobstore := newInmemoryBlobstore()
 	f := NewFile(blobstore, 100)
 
 	in := []byte("test")
