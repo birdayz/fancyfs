@@ -7,7 +7,7 @@ import (
 )
 
 func TestWriteReadAllBytes(t *testing.T) {
-	blobstore := newInmemoryBlobstore()
+	blobstore := NewInmemoryBlobstore()
 	f := NewFile(blobstore, 1024)
 
 	in := []byte("test")
@@ -23,7 +23,7 @@ func TestWriteReadAllBytes(t *testing.T) {
 }
 
 func TestWriteWithLeadingEmptySpace(t *testing.T) {
-	blobstore := newInmemoryBlobstore()
+	blobstore := NewInmemoryBlobstore()
 	f := NewFile(blobstore, 1024)
 
 	in := []byte("test")
@@ -40,7 +40,7 @@ func TestWriteWithLeadingEmptySpace(t *testing.T) {
 }
 
 func TestWriteReadInMiddleOfBlob(t *testing.T) {
-	blobstore := newInmemoryBlobstore()
+	blobstore := NewInmemoryBlobstore()
 	f := NewFile(blobstore, 1024)
 
 	in := []byte("test")
@@ -55,7 +55,7 @@ func TestWriteReadInMiddleOfBlob(t *testing.T) {
 }
 
 func TestWriteReadLargerThanBlobSize(t *testing.T) {
-	blobstore := newInmemoryBlobstore()
+	blobstore := NewInmemoryBlobstore()
 	f := NewFile(blobstore, 1)
 
 	in := []byte("test")
@@ -65,7 +65,7 @@ func TestWriteReadLargerThanBlobSize(t *testing.T) {
 }
 
 func TestReadLastByte(t *testing.T) {
-	blobstore := newInmemoryBlobstore()
+	blobstore := NewInmemoryBlobstore()
 	f := NewFile(blobstore, 100)
 
 	in := []byte("test")
@@ -80,8 +80,9 @@ func TestReadLastByte(t *testing.T) {
 	assert.Equal(t, 1, n)
 	assert.Equal(t, []byte("t"), result[:n])
 }
+
 func TestSizeAfterWrite(t *testing.T) {
-	blobstore := newInmemoryBlobstore()
+	blobstore := NewInmemoryBlobstore()
 	f := NewFile(blobstore, 100)
 
 	in := []byte("test")

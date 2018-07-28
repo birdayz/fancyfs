@@ -1,0 +1,27 @@
+syntax = "proto3";
+package schema;
+
+//protoc --go_out=. *.proto
+
+message SignedBlob {
+  bytes payload = 1;
+  Signature signature = 2;
+}
+
+message Signature {
+  string type = 1;
+  bytes signature = 2;
+}
+
+message PermanodeMeta {
+  string rnd = 1; // rnd stuff to make this blob's id unique
+  string create_timestamp = 2;
+}
+
+message FileNode {
+  PermanodeMeta meta = 1;
+  string filename  = 2;
+  int64 size = 3;
+  int64 blob_size = 4;
+  map<int64, string> blobRefs = 5; // index to blob id
+}

@@ -12,6 +12,8 @@ type File struct {
 	blobs     map[int64]string
 	blobSize  int64
 	size      int64
+
+	offset int64 // Used for write/read
 }
 
 func NewFile(blobProvider Blobstore, blobSize int64) *File {
@@ -19,6 +21,16 @@ func NewFile(blobProvider Blobstore, blobSize int64) *File {
 		blobstore: blobProvider,
 		blobSize:  blobSize,
 		blobs:     make(map[int64]string),
+	}
+}
+
+func NewFileFromSchemaBlob(blobstore Blobstore, blobSize int64, blobRefs map[int64]string, size int64) *File {
+	println("size", size)
+	return &File{
+		blobstore: blobstore,
+		blobSize:  blobSize,
+		blobs:     blobRefs,
+		size:      size,
 	}
 }
 
@@ -136,4 +148,21 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 
 func blobNoForOffset(off int64, blobSize int64) int64 {
 	return off / blobSize
+}
+
+// GetSnapshot returns a metadata snapshot of this file
+func (f *File) GetSnapshot() (blobs map[int64]string, size int64) {
+	return f.blobs, f.size
+}
+
+func (f *File) Write(p []byte) (n int, err error) {
+	n, err = f.WriteAt(p, f.offset)
+	f.offset += int64(n)
+	return
+}
+
+func (f *File) Read(p []byte) (n int, err error) {
+	n, err = f.ReadAt(p, f.offset)
+	f.offset += int64(n)
+	return
 }

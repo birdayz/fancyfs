@@ -25,7 +25,7 @@ type inmemoryBlobstore struct {
 }
 
 // nolint: deadcode
-func newInmemoryBlobstore() *inmemoryBlobstore {
+func NewInmemoryBlobstore() *inmemoryBlobstore {
 	return &inmemoryBlobstore{
 		blobs: make(map[string]*Blob),
 	}
