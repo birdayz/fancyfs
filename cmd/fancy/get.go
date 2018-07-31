@@ -27,7 +27,7 @@ var getFileCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		minio, err := blobstore.NewMinio(minioEndpoint, minioAccessKey, minioSecretKey, false)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Failed to create blobstore: ", err)
+			fmt.Fprintln(os.Stderr, "Failed to create blobstore: ", err) // nolint: errcheck
 			os.Exit(1)
 		}
 
@@ -38,7 +38,7 @@ var getFileCmd = &cobra.Command{
 		}
 		fileNode, err := schemaStore.Get(strings.TrimPrefix(args[0], "sha256-"))
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Failed to get schema blob", err)
+			fmt.Fprintln(os.Stderr, "Failed to get schema blob", err) // nolint: errcheck
 		}
 
 		f := cas.NewFileFromSchemaBlob(minio, fileNode.GetBlobSize(), fileNode.GetBlobRefs(), fileNode.GetSize())
