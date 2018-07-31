@@ -54,7 +54,8 @@ var createFileCmd = &cobra.Command{
 
 		n, err := io.Copy(f, input)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
+			fmt.Fprintln(os.Stderr, "failed to copy all:", err)
+			fmt.Println(n)
 			os.Exit(1)
 		}
 		if n != stat.Size() {

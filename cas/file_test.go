@@ -1,7 +1,11 @@
 package cas
 
 import (
+	"bytes"
+	"io"
 	"testing"
+
+	"math/rand"
 
 	"github.com/birdayz/fancyfs/blobstore"
 	"github.com/stretchr/testify/assert"
@@ -93,5 +97,24 @@ func TestSizeAfterWrite(t *testing.T) {
 	assert.Equal(t, len(in), n)
 
 	assert.EqualValues(t, len(in), f.size)
+
+}
+
+func TestWriteMultipleBufferSizes(t *testing.T) {
+	inmem := blobstore.NewInmemoryBlobstore()
+	f := NewFile(inmem, 2*1024*1024)
+
+	in := make([]byte, 65536)
+	_, _ = rand.Read(in)
+
+	n, err := io.Copy(f, bytes.NewReader(in))
+	assert.NoError(t, err)
+	assert.EqualValues(t, len(in), n)
+
+	out := make([]byte, 65536)
+	n2, err := f.ReadAt(out, 0)
+	assert.NoError(t, err)
+	assert.EqualValues(t, len(out), n2)
+	assert.EqualValues(t, in, out)
 
 }

@@ -72,8 +72,13 @@ func (f *File) blobForOffset(fileOff int64) (blob []byte, err error) {
 		if err != nil {
 			return nil, err
 		}
-		return bl.Data, err
+
+		blobData := make([]byte, len(bl.Data), f.blobSize) // TODO move this somewhere else where we can control this separately
+		_ = copy(blobData, bl.Data)
+		// TODO handle short writes
+		return blobData, err
 	}
+
 	blobData := make([]byte, 0, f.blobSize) // TODO move this somewhere else where we can control this separately
 	blob = blobData
 	return
@@ -116,6 +121,12 @@ func (f *File) WriteAt(b []byte, off int64) (n int, err error) {
 
 		// We altered the blob, so we have to save it at the blob
 		// store. Do this before adjusting n.
+
+		// TODO don't write blob here, but in Flush/Sync(). Currently,
+		// this behavior leads to unnecessary small blobs of the buffer
+		// size (eg 32k in case of io.copy) to be written, re-read in
+		// the next WriteAt and Written again..with the previous version
+		// of the blob being obsolete.
 		id, created, err := f.blobstore.Put(blob)
 		if err != nil {
 			return n, err
