@@ -21,8 +21,8 @@ var getCmd = &cobra.Command{
 
 var getFileCmd = &cobra.Command{
 	Use:   "file",
-	Short: "Create file",
-	Long:  "Create file",
+	Short: "Get file",
+	Long:  "Get file",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		minio, err := blobstore.NewMinio(minioEndpoint, minioAccessKey, minioSecretKey, false)
