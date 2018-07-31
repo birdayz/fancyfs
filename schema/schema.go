@@ -1,7 +1,9 @@
 package schema
 
-import "github.com/birdayz/fancyfs"
-import "github.com/golang/protobuf/proto"
+import (
+	"github.com/birdayz/fancyfs"
+	"github.com/golang/protobuf/proto"
+)
 
 type Storage struct {
 	Blobstore fancyfs.Blobstore
@@ -30,6 +32,6 @@ func (s *Storage) Get(id string) (*FileNode, error) {
 		return nil, err
 	}
 
-	var schemaBlob *FileNode
-	return schemaBlob, proto.Unmarshal(blob.Data, schemaBlob)
+	var schemaBlob FileNode
+	return &schemaBlob, proto.Unmarshal(blob.Data, &schemaBlob)
 }

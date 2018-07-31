@@ -77,7 +77,7 @@ var createFileCmd = &cobra.Command{
 			},
 			Filename: stat.Name(),
 			Size:     stat.Size(),
-			BlobSize: size,
+			BlobSize: defaultBlobSize,
 			BlobRefs: blobs,
 		}
 
