@@ -1,12 +1,12 @@
 package schema
 
 import (
-	"github.com/birdayz/fancyfs"
+	"github.com/birdayz/fancyfs/blobstore"
 	"github.com/golang/protobuf/proto"
 )
 
 type Storage struct {
-	Blobstore fancyfs.Blobstore
+	Blobstore blobstore.Blobstore
 }
 
 func (s *Storage) Put(schemaBlob *FileNode) (id string, created bool, err error) {

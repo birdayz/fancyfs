@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/birdayz/fancyfs"
+	"github.com/birdayz/fancyfs/blobstore"
 )
 
 // File represents the current composition of blobs for a file.
 type File struct {
-	blobstore fancyfs.Blobstore
+	blobstore blobstore.Blobstore
 	blobs     map[int64]string
 	blobSize  int64
 	size      int64
@@ -18,7 +18,7 @@ type File struct {
 	offset int64 // Used for write/read
 }
 
-func NewFile(blobProvider fancyfs.Blobstore, blobSize int64) *File {
+func NewFile(blobProvider blobstore.Blobstore, blobSize int64) *File {
 	return &File{
 		blobstore: blobProvider,
 		blobSize:  blobSize,
@@ -26,7 +26,7 @@ func NewFile(blobProvider fancyfs.Blobstore, blobSize int64) *File {
 	}
 }
 
-func NewFileFromSchemaBlob(blobstore fancyfs.Blobstore, blobSize int64, blobRefs map[int64]string, size int64) *File {
+func NewFileFromSchemaBlob(blobstore blobstore.Blobstore, blobSize int64, blobRefs map[int64]string, size int64) *File {
 	return &File{
 		blobstore: blobstore,
 		blobSize:  blobSize,

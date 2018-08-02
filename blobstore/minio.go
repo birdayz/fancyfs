@@ -6,7 +6,7 @@ import (
 
 	"io/ioutil"
 
-	"github.com/birdayz/fancyfs"
+	"github.com/birdayz/fancyfs/blob"
 	minio "github.com/minio/minio-go"
 )
 
@@ -16,7 +16,7 @@ type minioBlobstore struct {
 	client *minio.Client
 }
 
-func NewMinio(endpoint, accessKey, secretKey string, useSSL bool) (blobstore fancyfs.Blobstore, err error) {
+func NewMinio(endpoint, accessKey, secretKey string, useSSL bool) (blobstore Blobstore, err error) {
 	// Initialize minio client object.
 	minioClient, err := minio.New(endpoint, accessKey, secretKey, useSSL)
 	if err != nil {
@@ -38,7 +38,7 @@ func NewMinio(endpoint, accessKey, secretKey string, useSSL bool) (blobstore fan
 
 }
 
-func (m *minioBlobstore) Get(id string) (*fancyfs.Blob, error) {
+func (m *minioBlobstore) Get(id string) (*blob.Blob, error) {
 	object, err := m.client.GetObject(defaultBucket, id, minio.GetObjectOptions{})
 	if err != nil {
 		return nil, err
@@ -49,7 +49,7 @@ func (m *minioBlobstore) Get(id string) (*fancyfs.Blob, error) {
 		return nil, err
 	}
 
-	return &fancyfs.Blob{
+	return &blob.Blob{
 		Data: data,
 	}, nil
 }

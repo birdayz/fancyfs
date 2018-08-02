@@ -1,4 +1,4 @@
-package fancyfs
+package blob
 
 type Blob struct {
 	Data []byte
