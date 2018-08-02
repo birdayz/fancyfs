@@ -32,7 +32,6 @@ var getFileCmd = &cobra.Command{
 		}
 
 		blobstore := minio
-		// f := cas.NewFile(blobstore, defaultBlobSize)
 		schemaStore := schema.Storage{
 			Blobstore: blobstore,
 		}
@@ -45,10 +44,11 @@ var getFileCmd = &cobra.Command{
 
 		n, err := io.Copy(os.Stdout, f)
 		if err != nil {
-			panic(err)
+			fmt.Fprintln(os.Stderr, "Failed to copy ", err)
+			os.Exit(1)
 		}
 		if n != fileNode.GetSize() {
-			panic("didnt copy all")
+			fmt.Fprintln(os.Stderr, "Didn't copy sufficient bytes", err)
 		}
 
 	},
