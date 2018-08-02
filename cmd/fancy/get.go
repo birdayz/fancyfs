@@ -44,11 +44,11 @@ var getFileCmd = &cobra.Command{
 
 		n, err := io.Copy(os.Stdout, f)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Failed to copy ", err)
+			fmt.Fprintln(os.Stderr, "Failed to copy ", err) // nolint: errcheck
 			os.Exit(1)
 		}
 		if n != fileNode.GetSize() {
-			fmt.Fprintln(os.Stderr, "Didn't copy sufficient bytes", err)
+			fmt.Fprintln(os.Stderr, "Didn't copy sufficient bytes", err) // nolint: errcheck
 		}
 
 	},
