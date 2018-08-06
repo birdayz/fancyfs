@@ -1,4 +1,4 @@
-package schema
+package schema_test
 
 import (
 	"io"
@@ -9,6 +9,7 @@ import (
 
 	"github.com/birdayz/fancyfs/blobstore"
 	"github.com/birdayz/fancyfs/cas"
+	"github.com/birdayz/fancyfs/schema"
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,7 +24,7 @@ func TestStuff(t *testing.T) {
 
 	i := blobstore.NewInmemoryBlobstore()
 
-	fancyFile := cas.NewFile(i, blobSize)
+	fancyFile := cas.NewFile(i, blobSize, "tmp")
 
 	n, err := io.Copy(fancyFile, f)
 	assert.NoError(t, err)
@@ -35,11 +36,12 @@ func TestStuff(t *testing.T) {
 
 	blobs, size := fancyFile.GetSnapshot()
 
-	schemaBlob := &FileNode{
-		Meta:     &PermanodeMeta{},
+	schemaBlob := &schema.FileNode{
+		Meta:     &schema.PermanodeMeta{},
 		Filename: stat.Name(),
 		Size:     int64(size),
 		BlobRefs: blobs,
+		BlobSize: blobSize,
 	}
 
 	serialized, err := proto.Marshal(schemaBlob)
@@ -47,7 +49,7 @@ func TestStuff(t *testing.T) {
 	err = ioutil.WriteFile("/tmp/schemablob", serialized, 0777)
 	assert.NoError(t, err)
 
-	fileNew := cas.NewFileFromSchemaBlob(i, blobSize, schemaBlob.BlobRefs, schemaBlob.Size)
+	fileNew := cas.NewFileFromSchemaBlob(i, blobSize, schemaBlob.BlobRefs, schemaBlob.Size, "tmp")
 
 	buf, err := ioutil.ReadAll(fileNew)
 	assert.NoError(t, err)

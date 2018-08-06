@@ -40,7 +40,7 @@ var getFileCmd = &cobra.Command{
 			fmt.Fprintln(os.Stderr, "Failed to get schema blob", err) // nolint: errcheck
 		}
 
-		f := cas.NewFileFromSchemaBlob(minio, fileNode.GetBlobSize(), fileNode.GetBlobRefs(), fileNode.GetSize())
+		f := cas.NewFileFromSchemaBlob(minio, fileNode.GetBlobSize(), fileNode.GetBlobRefs(), fileNode.GetSize(), "tmp") // TODO fixme "generate" permanode id before
 
 		n, err := io.Copy(os.Stdout, f)
 		if err != nil {

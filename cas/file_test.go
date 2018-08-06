@@ -13,7 +13,7 @@ import (
 
 func TestWriteReadAllBytes(t *testing.T) {
 	inmem := blobstore.NewInmemoryBlobstore()
-	f := NewFile(inmem, 1024)
+	f := NewFile(inmem, 1024, "tmp")
 
 	in := []byte("test")
 	n, err := f.WriteAt(in, 0)
@@ -29,7 +29,7 @@ func TestWriteReadAllBytes(t *testing.T) {
 
 func TestWriteWithLeadingEmptySpace(t *testing.T) {
 	inmem := blobstore.NewInmemoryBlobstore()
-	f := NewFile(inmem, 1024)
+	f := NewFile(inmem, 1024, "tmp")
 
 	in := []byte("test")
 	n, err := f.WriteAt(in, 1)
@@ -46,7 +46,7 @@ func TestWriteWithLeadingEmptySpace(t *testing.T) {
 
 func TestWriteReadInMiddleOfBlob(t *testing.T) {
 	inmem := blobstore.NewInmemoryBlobstore()
-	f := NewFile(inmem, 1024)
+	f := NewFile(inmem, 1024, "tmp")
 
 	in := []byte("test")
 	n, err := f.WriteAt(in, 1)
@@ -61,7 +61,7 @@ func TestWriteReadInMiddleOfBlob(t *testing.T) {
 
 func TestWriteReadLargerThanBlobSize(t *testing.T) {
 	inmem := blobstore.NewInmemoryBlobstore()
-	f := NewFile(inmem, 1)
+	f := NewFile(inmem, 1, "tmp")
 
 	in := []byte("test")
 	_, err := f.WriteAt(in, 0)
@@ -71,7 +71,7 @@ func TestWriteReadLargerThanBlobSize(t *testing.T) {
 
 func TestReadLastByte(t *testing.T) {
 	inmem := blobstore.NewInmemoryBlobstore()
-	f := NewFile(inmem, 100)
+	f := NewFile(inmem, 100, "tmp")
 
 	in := []byte("test")
 
@@ -88,7 +88,7 @@ func TestReadLastByte(t *testing.T) {
 
 func TestSizeAfterWrite(t *testing.T) {
 	inmem := blobstore.NewInmemoryBlobstore()
-	f := NewFile(inmem, 100)
+	f := NewFile(inmem, 100, "tmp")
 
 	in := []byte("test")
 
@@ -102,7 +102,7 @@ func TestSizeAfterWrite(t *testing.T) {
 
 func TestWriteMultipleBufferSizes(t *testing.T) {
 	inmem := blobstore.NewInmemoryBlobstore()
-	f := NewFile(inmem, 2*1024*1024)
+	f := NewFile(inmem, 2*1024*1024, "tmp")
 
 	in := make([]byte, 65536)
 	_, _ = rand.Read(in)

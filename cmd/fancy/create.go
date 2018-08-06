@@ -34,7 +34,7 @@ var createFileCmd = &cobra.Command{
 		}
 
 		blobstore := minio
-		f := cas.NewFile(blobstore, defaultBlobSize)
+		f := cas.NewFile(blobstore, defaultBlobSize, "tmp") // TODO fixme "generate" permanode id before
 		schemaStore := schema.Storage{
 			Blobstore: blobstore,
 		}
