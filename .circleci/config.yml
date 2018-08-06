@@ -28,5 +28,5 @@ jobs:
       - run: dep ensure
       - run: dep status
       - run: make build
-      - run: make lint
+        #- run: make lint
       - run: make test
